@@ -22,8 +22,9 @@ PATCH
 
 DELETE:
 1. delete friend request '/:user_id/request/:friend_id'
-2. delete friend '/:user_id/unfriend/:friend_id'
-3. delete all friends - when deleting user entirely '/:user_id/delete'
+2. unsend friend request '/:user_id/unsend/:friend_id'
+3. delete friend '/:user_id/unfriend/:friend_id'
+4. delete all friends - when deleting user entirely '/:user_id/delete'
 
 */
 
@@ -210,18 +211,103 @@ router.patch('/:user_id/accept/:friend_id', validateRequest, async (req, res, ne
     }
 })
 
-//DELETE: delete friend request
+//DELETE: remove friend request
 router.delete('/:user_id/request/:friend_id', validateRequest, async (req, res, next) => {
+    try {
+        const user_id = req.params.user_id
+        const friend_id = req.params.friend_id
 
+        await friendModel.findOne({ user_id: user_id }, (err, found) => {
+            if (err) next(err)
+            if (found) {
+                found.requests = found.requests.filter(id => {
+                    return id != friend_id
+                })
+                found.save((error, success) => {
+                    if (error) next(error)
+                    res.status(200).json(success)
+                })
+            } else {
+                res.status(404).send('this user does not have a friend model. please create one and proceed')
+            }
+        })
+
+    } catch (err) {
+        next(err)
+    }
+})
+
+//DELETE: unsend friend request
+router.delete('/:user_id/unsend/:friend_id', validateRequest, async (req, res, next) => {
+    try {
+        const user_id = req.params.user_id
+        const friend_id = req.params.friend_id
+
+        //Remove request from friend's end if friend exists
+        await friendModel.findOne({ user_id: friend_id }, (err, found) => {
+            if (err) next(err)
+            if (found) {
+                found.requests = found.requests.filter(id => {
+                    return id != user_id
+                })
+                found.save((error, success) => {
+                    if (error) next(error)
+                    res.status(200).json(success)
+                })
+            }
+        })
+
+    } catch (err) {
+        next(err)
+    }
 })
 
 //DELETE: delete friend
 router.delete('/:user_id/unfriend/:friend_id', validateRequest, async (req, res, next) => {
+    try {
+        const user_id = req.params.user_id
+        const friend_id = req.params.friend_id
 
+        await friendModel.findOne({ user_id: user_id }, (err, found) => {
+            if (err) next(err)
+            if (found) {
+                found.friends = found.friends.filter(id => {
+                    return id != friend_id
+                })
+                found.save((error, success) => {
+                    if (error) next(error)
+                    res.status(200).json(success)
+                })
+            } else {
+                res.status(404).send('this user does not have a friend model. please create one and proceed')
+            }
+        })
+    } catch (err) {
+        next(err)
+    }
 })
 
-//DELETE: delete all friends : when deleting user entirely
-router.delete('/:user_id/delete')
+//DELETE: delete user : Call this when deleting user entirely
+router.delete('/:user_id/delete', async (req, res, next) => {
+    try {
+        const user_id = req.params.user_id
+
+        if (!validateId(user_id)) {
+            res.status(400).send('user id is not valid')
+        } else {
+            if (!userExists(user_id)) {
+                res.status(404).send('user does not exist')
+            } else {
+                await friendModel.findOneAndDelete({ user_id: user_id }, (err, success) => {
+                    if (err) next(err)
+                    res.status(200).json(success)
+                })
+            }
+        }
+    } catch (err) {
+        next(err)
+    }
+})
 
 // Error Handler
 router.use((err, req, res, next) => {
