@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 
 const port = process.env.PORT || 3000
-const mongodbConnectionUrl = "mongodb+srv://admin-aarya:Test-123@cluster0-tq3ny.mongodb.net/ChatApp"
+const mongodbConnectionUrl = `mongodb+srv://admin-aarya:${process.env.MNG_PASSWORD}@cluster0-tq3ny.mongodb.net/ChatApp`
 
 const userRouter = require('./routes/users')
 const roomRouter = require('./routes/rooms')
