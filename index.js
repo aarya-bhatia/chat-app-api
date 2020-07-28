@@ -20,6 +20,7 @@ app.use('chats', routes.rooms)
 app.use('/network', routes.network)
 
 app.use('*', (err, req, res, next) => {
+    console.log(err)
     res.status(500).send('Oops, something went wrong!')
 })
 

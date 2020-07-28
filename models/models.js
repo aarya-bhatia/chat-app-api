@@ -1,4 +1,7 @@
 /* SCHEMAS */
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.Types.ObjectId
 
 const networkSchema = new Schema({
     user_id: ObjectId,
@@ -18,6 +21,17 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+const messageSchema = new mongoose.Schema({
+    content: {
+        type: String,
+        required: true
+    },
+    sender: {
+        type: String,
+        required: true
+    }
+})
+
 const roomSchema = new mongoose.Schema({
     members: {
         type: [userSchema]
@@ -27,17 +41,6 @@ const roomSchema = new mongoose.Schema({
     },
     messages: {
         type: [messageSchema]
-    }
-})
-
-const messageSchema = new mongoose.Schema({
-    content: {
-        type: String,
-        required: true
-    },
-    sender: {
-        type: String,
-        required: true
     }
 })
 

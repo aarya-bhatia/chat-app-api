@@ -9,22 +9,12 @@ SUBROUTE '/user/'
 
 */
 const express = require('express')
-const mongoose = require('mongoose')
 const router = express.Router()
+const MODELS = require(__basedir + '/models/models')
+const userModel = MODELS.User
+const validate = require(__basedir + '/util/validate')
 
-const MODELS = require('../../models/index').model
-const userModel = MODELS.user
-
-const validateUser = async(req, res, next) => {
-    if (mongoose.Schema.Types.ObjectId)
-        await userModel.findById(req.params.user_id, (err, user) => {
-            if (err) next(err)
-            if (user)
-        })
-}
-const validateRoom = async(req, res, next) => {
-
-}
+router.use(validate.user)
 
 // Get all rooms containing a user
 router.get('/:user_id', async(req, res) => {

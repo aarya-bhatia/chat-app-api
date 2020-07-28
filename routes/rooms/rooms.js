@@ -13,7 +13,7 @@ ROUTE: '/:room_id/'
 
  */
 
-const roomModel = require('../../models/index').model.room
+const roomModel = require(__basedir + '/models/models').Room
 const express = require('express')
 const router = express.Router()
 

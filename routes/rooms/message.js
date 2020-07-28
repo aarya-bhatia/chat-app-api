@@ -10,8 +10,8 @@ SUBROUTE: '/message/'
 const express = require('express')
 const router = express.Router()
 
-const MODELS = require('../../models/index').model
-const messageModel = MODELS.message
+const MODELS = require(__basedir + '/models/models')
+const messageModel = MODELS.Message
 
 // GET: get all messages in a room
 router.get('/:room_id/messages', async(req, res) => {

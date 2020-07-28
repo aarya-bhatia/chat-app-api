@@ -7,7 +7,7 @@ PUT /network/:user_id/outgoing/:friend_id/ - unsend an outgoing friend request
 */
 
 const express = require('express')
-const router = express.router()
+const router = express.Router()
 
 const networkModel = require(__basedir + '/models/models').network
 const network = require(__basedir + '/util/network')

@@ -38,7 +38,7 @@ router.post('/login', async(req, res, next) => {
 
 //Sign up new user 
 router.post('/signup', async(req, res, next) => {
-    const username = authUtil.usernameValidation(req.params.username)
+    const username = authUtil.usernameValidation(req.body.username)
     const password = req.body.password
 
     try {

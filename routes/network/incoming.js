@@ -7,7 +7,7 @@ PUT /network/:user_id/request/incoming/:friend_id - reject an incoming friend re
 */
 
 const express = require('express')
-const router = express.router()
+const router = express.Router()
 
 const networkModel = require(__basedir + '/models/models').network
 const network = require(__basedir + '/util/network')

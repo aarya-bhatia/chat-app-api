@@ -1,6 +1,6 @@
 module.exports = {
     auth: require('./auth/auth'),
-    user: require('./user/users'),
-    room: require('./rooms/rooms'),
+    users: require('./user/users'),
+    rooms: require('./rooms/rooms'),
     network: require('./network/network')
 }
