@@ -1,77 +1,62 @@
-/* LOGIN AND SIGNUP ROUTES */
-
 const express = require('express')
-const model = require('../models/index').model
-const userModel = model.user
-const friendModel = model.friend
 
-const userUtil = require('../util/user')
-const validate = require('../util/validate')
+const userModel = require(__basedir + '/models/models').User
+const authUtil = require(__basedir + '/util/auth')
 
 const router = express.Router()
+
 router.use(express.json())
 router.use(express.urlencoded({ extended: true }))
 
-//POST: Login a user with his credentials
+//Login a user with his credentials
 router.post('/login', async(req, res, next) => {
     try {
         const username = req.body.username // validated username 
         const password = req.body.password // a md5 encrypted password
 
-        await userModel.findOne({ username: username }, (err, found) => {
-            if (err) next(err)
-            if (found) {
-                if (found.password == password) {
-                    res.status(200).json(found) // send the user back
-                } else {
-                    // incorrect password
-                    res.status(404).send('Invalid password. Please try again.')
-                }
-            } else {
-                // incorrect username
-                res.status(404).send('This username does not exist. Try signing up instead.')
+        const user = await userModel.findOne({ username: username })
+
+        // user does not exist
+        if (!user) {
+            res.status(404).send('This username does not exist. Try signing up instead.')
+        }
+        // user exists
+        else {
+            // send the user back if passwords match
+            if (user.password == password) {
+                res.status(200).json(user)
             }
-        })
+            // passwords do not match 
+            else {
+                res.status(404).send('Invalid password. Please try again.')
+            }
+        }
     } catch (err) {
         next(err)
     }
 })
 
-//POST: create new user 
-router.post('/signup', [validate.validateUsername, userUtil.usernameAvailable],
-    async(req, res, next) => {
-        const username = res.locals.username // validated and available username 
-        const password = req.body.password // expecting md5 encrypted password
+//Sign up new user 
+router.post('/signup', async(req, res, next) => {
+    const username = authUtil.usernameValidation(req.params.username)
+    const password = req.body.password
 
-        // create user
-        const newUser = new userModel({
-            username: username,
-            password: password
-        })
-
-        const newUserId = newUser._id
-
-        // save new user to database
-        await newUser.save(err => {
-            if (err) next(err)
-
-            // init new fmodel
-            const newFModel = new friendModel({
-                user_id: newUserId,
-                friends: [],
-                requests: []
+    try {
+        if (authUtil.usernameAvailable(username)) {
+            // create user
+            const newUser = new userModel({
+                username: username,
+                password: password
             })
 
-            console.log("NEW USER CREATED->")
-            console.log(newUser)
+            await newUser.save()
+            console.log(`new user created successfully: ${newUser}`);
+            res.status(201).send('user created successfully')
 
-            newFModel.save(err => {
-                if (err) next(err)
-
-                console.log('fModel created for new user');
-                res.status(201).send('user created successfully')
-            })
-        })
-    })
+        } else {
+            res.status(400).send('this username is taken')
+        }
+    } catch (e) { next(e) }
+})
 
 module.exports = router
