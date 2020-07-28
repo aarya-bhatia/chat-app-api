@@ -28,7 +28,7 @@ router.post('/login', async(req, res, next) => {
             }
             // passwords do not match 
             else {
-                res.status(404).send('Invalid password. Please try again.')
+                res.status(404).end('Invalid password. Please try again.')
             }
         }
     } catch (err) {
@@ -57,6 +57,10 @@ router.post('/signup', async(req, res, next) => {
             res.status(400).send('this username is taken')
         }
     } catch (e) { next(e) }
+})
+
+router.use((err, req, res, next) => {
+    res.status(err.status).send(err)
 })
 
 module.exports = router

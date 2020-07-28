@@ -1,18 +1,3 @@
-const express = require('express')
-const path = require('path')
-
-const MODELS = require(path.join(__basedir, '/models/models'))
-const userModel = MODELS.User
-
-const validate = require(path.join(__basedir, '/util/validate'))
-const authUtil = require(path.join(__basedir, '/util/auth'))
-
-const router = express.Router()
-
-router.use(express.json())
-router.use(express.urlencoded({ extended: true }))
-router.use('/users', validate.user)
-
 /*
 Summary REST Model
 
@@ -29,20 +14,34 @@ DELETE
 
 */
 
+const express = require('express')
+const path = require('path')
+
+const MODELS = require(path.join(__basedir, '/models/models'))
+const userModel = MODELS.User
+
+const validate = require(path.join(__basedir, '/util/validate'))
+const authUtil = require(path.join(__basedir, '/util/auth'))
+
+const router = express.Router()
+
+router.use(express.json())
+router.use(express.urlencoded({ extended: true }))
+router.use('/users', validate.user)
+
 //get all users
 router.get('/', async(req, res, next) => {
     try {
         const users = await userModel.find({})
-        res.status(200).json(found)
+        res.status(200).json(users)
     } catch (err) {
         next(err)
     }
 })
 
-//get a user
+// get single user
 router.get('/:user_id', (req, res, next) => {
-    const user = res.locals.user
-    res.status(200).json(user)
+    res.status(200).json(res.locals.user)
 })
 
 

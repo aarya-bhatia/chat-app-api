@@ -14,19 +14,26 @@ GET /network/:user_id/outgoing - get outgoing friend requests sent by user
 POST /network/:user_id/outgoing/:friend_id/ - send an outgoing friend request
 PUT /network/:user_id/outgoing/:friend_id/ - unsend an outgoing friend request
 
-GET /network/:user_id/incoming - get incoming friend requests recieved by user
-POST /network/:user_id/request/incoming/:friend_id/incoming - accept an incoming friend request
-PUT /network/:user_id/request/incoming/:friend_id/incoming - reject an incoming friend request
+GET /network/:user_id/incoming/ - get incoming friend requests recieved by user
+POST /network/:user_id/incoming/:friend_id - accept an incoming friend request
+PUT /network/:user_id/incoming/:friend_id - reject an incoming friend request
 
 */
-const networkModel = require(__basedir + '/models/models').network
+const networkModel = require(__basedir + '/models/models').Network
 const network = require(__basedir + '/util/network')
 
 const express = require('express')
 const router = express.Router()
 
-router.use('/:user_id/outgoing', require('./outgoing'))
-router.use('/:user_id/incoming', require('./incoming'))
+router.use('/:user_id/outgoing', (req, res, next) => {
+    req.user_id = req.params.user_id
+    next()
+}, require('./outgoing'))
+
+router.use('/:user_id/incoming', (req, res, next) => {
+    req.user_id = req.params.user_id
+    next()
+}, require('./incoming'))
 
 router
 // Get user's network
@@ -40,7 +47,7 @@ router
 // Create user's Network
 .post('/:user_id', async(req, res, next) => {
     try {
-        const network = new userNetwork({
+        const network = new networkModel({
             user_id: req.params.user_id,
             friends: [],
             incomingRequests: [],
