@@ -18,17 +18,11 @@ module.exports = (app) => {
     // make new post
     router.post("/new-post", post.makeNewPost)
 
-    // like friend's post
-    //router.post("/like-post", post.likePost)
+    // like or unlike post
+    router.post("/like-post", post.likePost)
 
-    // save friend's post
-    //router.post("/save-post", post.savePost)
-
-    // unlike a post
-    router.post("/unlike-post", post.unlikePost)
-
-    // unsave a post
-    router.post("/unsave-post", post.unsavePost)
+    // save or unsave post
+    router.post("/save-post", post.savePost)
 
     // delete post
     router.delete("/delete-post", post.deletePost)

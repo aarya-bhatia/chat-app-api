@@ -32,10 +32,10 @@ db.mongoose
 
 require("./routes/user.routes")(app)
 require("./routes/post.routes")(app)
-//require("./routes/room.routes")(app)
+require("./routes/room.routes")(app)
 
 const port = process.env.PORT || 3000
 
-module.exports = app.listen(port, () => {
+module.exports = app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port: ${port}`);
 })

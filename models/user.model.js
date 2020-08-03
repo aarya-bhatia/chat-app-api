@@ -13,7 +13,6 @@ module.exports = (mongoose) => {
             friends: [String], /* reference to other users */
             outgoingRequests: [String],
             incomingRequests: [String],
-            posts: [mongoose.Schema.Types.ObjectId],
             likedPosts: [mongoose.Schema.Types.ObjectId],
             savedPosts: [mongoose.Schema.Types.ObjectId],
             rooms: [mongoose.Schema.Types.ObjectId],

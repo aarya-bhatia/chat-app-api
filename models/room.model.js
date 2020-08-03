@@ -8,7 +8,7 @@ module.exports = (mongoose) => {
                 sender: String,
                 timestamp: String
             }],
-            createdBy: String
+            admin: String
         }, { timestamps: true }))
 
     return Room
